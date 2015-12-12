@@ -1,4 +1,4 @@
-package ua.knure.domain;
+package com.qcsi.reversetool.domain;
 
 public class ForeignKey {
 

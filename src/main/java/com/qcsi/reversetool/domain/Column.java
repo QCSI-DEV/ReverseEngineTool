@@ -1,4 +1,4 @@
-package ua.knure.domain;
+package com.qcsi.reversetool.domain;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

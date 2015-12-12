@@ -1,7 +1,7 @@
-package ua.knure;
+package com.qcsi.reversetool;
 
-import ua.knure.domain.Column;
-import ua.knure.domain.Table;
+import com.qcsi.reversetool.domain.Column;
+import com.qcsi.reversetool.domain.Table;
 
 import java.sql.*;
 import java.util.ArrayList;

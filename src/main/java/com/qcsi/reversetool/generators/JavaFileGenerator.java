@@ -1,6 +1,6 @@
-package ua.knure.generators;
+package com.qcsi.reversetool.generators;
 
-import ua.knure.domain.Table;
+import com.qcsi.reversetool.domain.Table;
 
 public interface JavaFileGenerator {
 

@@ -1,5 +1,4 @@
-package ua.knure;
-
+package com.qcsi.reversetool;
 import java.util.HashMap;
 
 public class Converter {
