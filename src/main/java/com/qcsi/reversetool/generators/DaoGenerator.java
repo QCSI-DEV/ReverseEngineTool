@@ -15,10 +15,9 @@ import java.util.Map;
 
 public class DaoGenerator {
 
-    public static void generate(String fileName, Table table){
-        Configuration cfg = new Configuration();
+    public static void generate(Configuration configuration, String fileName, Table table){
         try {
-            Template template = cfg.getTemplate(
+            Template template = configuration.getTemplate(
                     "src/main/java/com/qcsi/reversetool/templates/EntityDao.ftl");
 
             Map<String, Object> data = new HashMap<String, Object>();

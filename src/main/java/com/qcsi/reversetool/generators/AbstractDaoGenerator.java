@@ -3,6 +3,7 @@ package com.qcsi.reversetool.generators;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.Version;
 
 import java.io.*;
 import java.util.HashMap;
@@ -10,10 +11,9 @@ import java.util.Map;
 
 public class AbstractDaoGenerator {
 
-    public static void generate(String fileName, String dbmsName){
-        Configuration cfg = new Configuration();
+    public static void generate(Configuration configuration, String fileName, String dbmsName){
         try {
-            Template template = cfg.getTemplate(
+            Template template = configuration.getTemplate(
                     "src/main/java/com/qcsi/reversetool/templates/AbstractDao.ftl");
 
             Map<String, Object> data = new HashMap<String, Object>();

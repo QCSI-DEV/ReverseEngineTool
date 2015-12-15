@@ -51,8 +51,8 @@ public class MetaDataParser {
 
             while (tableMetaData.next()){
                 columns.add(new Column(
-                        tableMetaData.getString("column_name"),
-                        tableMetaData.getString("data_type")));
+                        Converter.toCamelCase(tableMetaData.getString("column_name")),
+                        Converter.toJavaType(tableMetaData.getString("data_type"))));
             }
         } catch (SQLException e) {
             System.out.println("Cannot parse the given ResultSet");
@@ -75,7 +75,7 @@ public class MetaDataParser {
         try {
             databaseMetaData = databaseStatement.executeQuery(DATABASE_META_QUERY);
             while (databaseMetaData.next()) {
-                tableNames.add(databaseMetaData.getString("table_name"));
+                tableNames.add(Converter.toCamelCase(databaseMetaData.getString("table_name")));
             }
         } catch (SQLException e) {
             System.out.println("Cannot parse the given ResultSet");
@@ -88,8 +88,7 @@ public class MetaDataParser {
         List<String> tableNames = getTableNames();
         List<Table> tables = new ArrayList<>();
         for (String tableName : tableNames) {
-            Table table = new Table(tableName,
-                    getColumns(tableName));
+            Table table = new Table(tableName, getColumns(tableName));
             tables.add(table);
         }
         return tables;
