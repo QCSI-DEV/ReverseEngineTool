@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 public class Converter {
     private static HashMap<String, String> typesMappings = new HashMap<>();
-
     static {
         typesMappings.put("bool", "boolean");
         typesMappings.put("\"char\"", "byte");
@@ -22,9 +21,9 @@ public class Converter {
         typesMappings.put("bytea", "byte{}");
         typesMappings.put("date", "Date");
         typesMappings.put("time", "Time");
-        typesMappings.put("timez", "Time");
+        typesMappings.put("timetz", "Time");
         typesMappings.put("timestamp", "Timestamp");
-        typesMappings.put("timestampz", "Timestamp");
+        typesMappings.put("timestamptz", "Timestamp");
 
         typesMappings.put("bool[]", "boolean[]");
         typesMappings.put("\"char\"[]", "byte[]");
@@ -48,7 +47,7 @@ public class Converter {
         typesMappings.put("anyelement", "Object");
         typesMappings.put("anyarray", "Object[]");
         typesMappings.put("cstring", "String");
-        typesMappings.put("record", "ResultSet");
+        typesMappings.put("record", "java.sql.ResultSet");
     }
 
     public static String toJavaType(String dbType){

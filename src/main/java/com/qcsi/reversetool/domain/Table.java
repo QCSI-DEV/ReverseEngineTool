@@ -9,9 +9,7 @@ public class Table {
 
     private String name;
     private List<Column> columns;
-    private List<PrimaryKey> primaryKeys;
 
-    // TODO primary keys are not taken into account yet
     public Table(String tableName, List<Column> columns) {
         this.name = tableName;
         this.columns = columns;
@@ -44,13 +42,5 @@ public class Table {
             e.printStackTrace();
         }
         return tableNames;
-    }
-
-    public List<PrimaryKey> getPrimaryKeys() {
-        return primaryKeys;
-    }
-
-    public void setPrimaryKeys(List<PrimaryKey> primaryKeys) {
-        this.primaryKeys = primaryKeys;
     }
 }

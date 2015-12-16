@@ -2,6 +2,8 @@ package com.qcsi.reversetool;
 
 import com.qcsi.reversetool.domain.Column;
 import com.qcsi.reversetool.domain.Table;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,28 +22,28 @@ public class MetaDataParser {
     public static final String TABLE_META_QUERY =
             "SELECT column_name, data_type  FROM information_schema.columns WHERE table_name = ?;";
 
-    static {
+    private static final Logger log = LogManager.getLogger(MetaDataParser.class.getName());
+
+    public MetaDataParser(){
         try {
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (ClassNotFoundException cnfException) {
-            System.out.println("Driver class cannot be found.");
-            cnfException.printStackTrace();
-        } catch (SQLException sqlException){
-            System.out.println("Cannot connect to the database.\n" + sqlException.getMessage());
-            sqlException.printStackTrace();
+        } catch (ClassNotFoundException e1) {
+            log.fatal("Driver class cannot be found.", e1);
+        } catch (SQLException e2){
+            log.fatal("Cannot connect to the database.", e2);
         }
+        log.trace("MetaDataParser instance is created");
     }
 
-    public static List<Column> getColumns(String tableName) {
+    public List<Column> getColumns(String tableName) {
         List<Column> columns = new ArrayList<>();
         PreparedStatement tableStatement;
         try {
             tableStatement = connection.prepareStatement(TABLE_META_QUERY);
             tableStatement.setString(1, tableName);
         } catch (SQLException e) {
-            System.out.println("Cannot create statement for getting table metadata. "
-                    + e.getMessage());
+            log.error("Cannot create statement for getting table metadata.", e);
             return columns;
         }
 
@@ -55,20 +57,19 @@ public class MetaDataParser {
                         Converter.toJavaType(tableMetaData.getString("data_type"))));
             }
         } catch (SQLException e) {
-            System.out.println("Cannot parse the given ResultSet");
-            e.printStackTrace();
+            log.error("Cannot parse the given ResultSet", e);
         }
+        log.trace("Columns are formed for table " + tableName);
         return columns;
     }
 
-    public static List<String> getTableNames(){
+    public List<String> getTableNames(){
         List<String> tableNames = new ArrayList<>();
         Statement databaseStatement;
         try {
             databaseStatement = connection.createStatement();
         } catch (SQLException e){
-            System.out.println("Cannot create statement for getting database metadata.");
-            e.printStackTrace();
+            log.error("Cannot create statement for getting database metadata.", e);
             return tableNames;
         }
         ResultSet databaseMetaData;
@@ -78,19 +79,20 @@ public class MetaDataParser {
                 tableNames.add(Converter.toCamelCase(databaseMetaData.getString("table_name")));
             }
         } catch (SQLException e) {
-            System.out.println("Cannot parse the given ResultSet");
-            e.printStackTrace();
+            log.error("Cannot parse the given ResultSet", e);
         }
+        log.trace("Table names are extracted");
         return tableNames;
     }
 
-    public static List<Table> getTables(){
+    public List<Table> getTables(){
         List<String> tableNames = getTableNames();
         List<Table> tables = new ArrayList<>();
         for (String tableName : tableNames) {
             Table table = new Table(tableName, getColumns(tableName));
             tables.add(table);
         }
+        log.trace("Tables are formed");
         return tables;
     }
 }

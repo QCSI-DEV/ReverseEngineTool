@@ -68,5 +68,26 @@ public abstract class ${dbms}AbstractDao<E> implements GenericDao<E> {
         return list;
     }
 
+    @Override
+    public T getByPrimaryKey(Integer primaryKey) throws SQLException{
+        List<T> list;
+        String query = getSelectQuery();
+        query += " WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, primaryKey);
+            ResultSet resultSet = statement.executeQuery();
+            list = parseResultSet(resultSet);
+        } catch (SQLException e) {
+            System.out.println("SQLException when trying to get element by primary key");
+        }
+        if (list == null || list.size() == 0) {
+            throw new SQLException("Record with " + key + "primary key was not found.");
+        }
+        if (list.size() > 1) {
+            throw new SQLException("Received more than one record by primary key");
+        }
+        return list.get(0);
+    }
+
     protected abstract List<E> parseResultSet(ResultSet resultSet) throws SQLException;
 }

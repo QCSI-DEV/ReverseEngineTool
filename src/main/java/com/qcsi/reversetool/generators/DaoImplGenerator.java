@@ -4,6 +4,8 @@ import com.qcsi.reversetool.domain.Table;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +16,8 @@ import java.util.Map;
 
 public class DaoImplGenerator {
 
+    private static final Logger log = LogManager.getLogger(DaoImplGenerator.class.getName());
+
     public static void generate(Configuration configuration, String fileName, String dbmsName, Table table) {
         try {
             Template template = configuration.getTemplate(
@@ -23,14 +27,14 @@ public class DaoImplGenerator {
             data.put("dbms", dbmsName);
             data.put("table", table);
 
-            // File output
             Writer file = new FileWriter(new File(fileName));
             template.process(data, file);
             file.flush();
             file.close();
 
         } catch (TemplateException | IOException e) {
-            e.printStackTrace();
+            log.error("Java class file for Entity cannot be generated", e);
         }
+        log.trace(fileName + " is generated");
     }
 }
