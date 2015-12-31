@@ -37,6 +37,7 @@ public class MetaDataParser {
     }
 
     public List<Column> getColumns(String tableName) {
+        log.entry(tableName);
         List<Column> columns = new ArrayList<>();
         PreparedStatement tableStatement;
         try {
@@ -46,6 +47,7 @@ public class MetaDataParser {
             log.error("Cannot create statement for getting table metadata.", e);
             return columns;
         }
+        log.trace("Statement for getting columns is created.");
 
         ResultSet tableMetaData;
         try {
@@ -59,7 +61,7 @@ public class MetaDataParser {
         } catch (SQLException e) {
             log.error("Cannot parse the given ResultSet", e);
         }
-        log.trace("Columns are formed for table " + tableName);
+        log.debug("Columns are formed for table " + tableName);
         return columns;
     }
 
@@ -81,7 +83,7 @@ public class MetaDataParser {
         } catch (SQLException e) {
             log.error("Cannot parse the given ResultSet", e);
         }
-        log.trace("Table names are extracted");
+        log.debug("Table names are extracted");
         return tableNames;
     }
 
@@ -92,7 +94,7 @@ public class MetaDataParser {
             Table table = new Table(tableName, getColumns(tableName));
             tables.add(table);
         }
-        log.trace("Tables are formed");
+        log.debug("Tables are formed");
         return tables;
     }
 }
