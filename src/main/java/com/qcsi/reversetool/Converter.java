@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class Converter {
     private static HashMap<String, String> typesMappings = new HashMap<>();
+
     static {
         typesMappings.put("bool", "boolean");
         typesMappings.put("\"char\"", "byte");
@@ -18,30 +19,12 @@ public class Converter {
         typesMappings.put("varchar", "String");
         typesMappings.put("text", "String");
         typesMappings.put("name", "String");
-        typesMappings.put("bytea", "byte{}");
+        typesMappings.put("bytea", "byte[]");
         typesMappings.put("date", "Date");
         typesMappings.put("time", "Time");
         typesMappings.put("timetz", "Time");
         typesMappings.put("timestamp", "Timestamp");
         typesMappings.put("timestamptz", "Timestamp");
-
-        typesMappings.put("bool[]", "boolean[]");
-        typesMappings.put("\"char\"[]", "byte[]");
-        typesMappings.put("int2[]", "short[]");
-        typesMappings.put("int4[]", "int[]");
-        typesMappings.put("int8[]", "long[]");
-        typesMappings.put("float4[]", "float[]");
-        typesMappings.put("float8[]", "double[]");
-        typesMappings.put("char[]", "String[]");
-        typesMappings.put("varchar[]", "String[]");
-        typesMappings.put("text[]", "String[]");
-        typesMappings.put("name[]", "String[]");
-        typesMappings.put("bytea[]", "byte[][]");
-        typesMappings.put("date[]", "Date[]");
-        typesMappings.put("time[]", "Time[]");
-        typesMappings.put("timetz[]", "Time[]");
-        typesMappings.put("timestamp[]", "Timestamp[]");
-        typesMappings.put("timestamptz[]", "Timestamp[]");
 
         typesMappings.put("\"any\"", "Object");
         typesMappings.put("anyelement", "Object");
@@ -51,7 +34,16 @@ public class Converter {
     }
 
     public static String toJavaType(String dbType){
-        return typesMappings.get(dbType);
+        String javaType = null;
+        if (dbType.contains("[]")) {
+            javaType = typesMappings.get(dbType.substring(0, dbType.length() - 2));
+            if (javaType != null)
+                javaType += "[]";
+        }
+        else
+            javaType = typesMappings.get(dbType);
+
+        return javaType;
     }
 
     public static String toCamelCase(String name){
