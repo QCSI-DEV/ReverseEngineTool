@@ -2,7 +2,7 @@ public interface GenericDao<E>{
 
     public E create() throws SQLException;
 
-    public void insert(E entity) throws SQLException;
+    public E insert(E entity) throws SQLException;
 
     public E getByPrimaryKey(int id) throws SQLException;
 

@@ -11,32 +11,34 @@ public abstract class ${dbms}AbstractDao<E> implements GenericDao<E> {
     protected abstract void prepareStatementForUpdate(PreparedStatement statement, E entity) throws SQLException;
     protected abstract void prepareStatementForDelete(PreparedStatement statement, E entity) throws SQLException;
 
+    protected abstract List<E> parseResultSet(ResultSet resultSet) throws SQLException;
+
     public E insert(E entity) throws SQLException {
         E insertInstance;
         String query = getCreateQuery();
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            prepareStatementForInsert(statement, entity);
-            int count = statement.executeUpdate();
-            if (count != 1) {
-                throw new SQLException("On insert modify more then 1 record: " + count);
+        PreparedStatement statement = connection.prepareStatement(query);
+        prepareStatementForCreate(statement, entity);
+        int count = statement.executeUpdate();
+        if (count != 1) {
+            throw new SQLException("On insert modify more then 1 record: " + count);
         }
 
         query = getSelectQuery() + " WHERE id = last_insert_id();";
-            PreparedStatement statement = connection.prepareStatement(query)
-            ResultSet resultSet = statement.executeQuery();
-            List<E> list = parseResultSet(resultSet);
-            if ((list == null) || (list.size() != 1)) {
-                throw new SQLException("Exception on getByPK(). Amount of returned entity records != 1.");
-            }
-            insertInstance = list.iterator().next();
+        statement = connection.prepareStatement(query);
+        ResultSet resultSet = statement.executeQuery();
+        List<E> list = parseResultSet(resultSet);
+        if ((list == null) || (list.size() != 1)) {
+            throw new SQLException("Exception on getByPK(). Amount of returned entity records != 1.");
+        }
+        insertInstance = list.iterator().next();
         statement.close();
         return insertInstance;
     }
 
     @Override
-    public void update(E entity) throws PersistException throws SQLException{
+    public void update(E entity) throws SQLException{
         String query = getUpdateQuery();
-        PreparedStatement statement = connection.prepareStatement(query);) {
+        PreparedStatement statement = connection.prepareStatement(query);
         prepareStatementForUpdate(statement, entity);
         int count = statement.executeUpdate();
         if (count != 1) {
@@ -46,22 +48,10 @@ public abstract class ${dbms}AbstractDao<E> implements GenericDao<E> {
     }
 
     @Override
-    public void delete(E entity) throws SQLException {
-        String query = getDeleteQuery();
-        PreparedStatement statement = connection.prepareStatement(query))
-        statement.setInt(1, entity.getId());
-        int count = statement.executeUpdate();
-        statement.close();
-        if (count != 1) {
-            throw new SQLException("On delete modify more then 1 record: " + count);
-        }
-    }
-
-    @Override
     public List<E> getAll() throws SQLException {
         List<E> list;
         String query = getSelectQuery();
-        PreparedStatement statement = connection.prepareStatement(query));
+        PreparedStatement statement = connection.prepareStatement(query);
         ResultSet resultSet = statement.executeQuery();
         statement.close();
         list = parseResultSet(resultSet);
@@ -69,8 +59,8 @@ public abstract class ${dbms}AbstractDao<E> implements GenericDao<E> {
     }
 
     @Override
-    public T getByPrimaryKey(Integer primaryKey) throws SQLException{
-        List<T> list;
+    public E getByPrimaryKey(int primaryKey) throws SQLException{
+        List<E> list = null;
         String query = getSelectQuery();
         query += " WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -81,13 +71,11 @@ public abstract class ${dbms}AbstractDao<E> implements GenericDao<E> {
             System.out.println("SQLException when trying to get element by primary key");
         }
         if (list == null || list.size() == 0) {
-            throw new SQLException("Record with " + key + "primary key was not found.");
+            throw new SQLException("Record with " + primaryKey + "primary key was not found.");
         }
         if (list.size() > 1) {
             throw new SQLException("Received more than one record by primary key");
         }
         return list.get(0);
     }
-
-    protected abstract List<E> parseResultSet(ResultSet resultSet) throws SQLException;
 }

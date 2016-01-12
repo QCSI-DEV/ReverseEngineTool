@@ -65,7 +65,7 @@ public class Main {
         Map<String, Object> data = new HashMap<>();
         data.put("dbms", DBMS_NAME);
 
-        data.put("fileName", dir + "/AbstractDao.java");
+        data.put("fileName", String.format("%s/%sAbstractDao.java", dir, DBMS_NAME));
         JavaFileGenerator.generate(conf, data, "AbstractDao.ftl");
 
         data.put("fileName", dir + "/GenericDao.java");
